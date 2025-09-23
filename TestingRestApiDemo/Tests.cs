@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Newtonsoft.Json;
 using RestSharp;
 using System.Collections.Generic;
 using System.IO;
@@ -10,11 +9,11 @@ namespace TestingRestApiDemo
 {
     public class Tests
     {
-        private ServiceDriver _serviceDriver;
+        private ApiClient _serviceDriver;
 
         public Tests()
         {
-            _serviceDriver = new ServiceDriver(Settings.NbpEndpoint);
+            _serviceDriver = new ApiClient(Settings.NbpEndpoint);
         }
 
         [Fact]
@@ -23,7 +22,7 @@ namespace TestingRestApiDemo
             string url = "http://api.nbp.pl";
 
             var restclient = new RestClient(url);
-            var request = new RestRequest("/api/exchangerates/rates/A/GBP/2019-11-21", Method.GET);
+            var request = new RestRequest("/api/exchangerates/rates/A/GBP/2019-11-21", Method.Get);
             var response = restclient.Execute(request);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -35,7 +34,7 @@ namespace TestingRestApiDemo
             string url = "http://api.nbp.pl";
 
             var restclient = new RestClient(url);
-            var request = new RestRequest("/api/exchangerates/rates/A/GBP/2019-11-21", Method.GET);
+            var request = new RestRequest("/api/exchangerates/rates/A/GBP/2019-11-21", Method.Get);
             var response = restclient.Execute(request);
 
             Assert.Contains("funt szterling", response.Content);
@@ -48,7 +47,7 @@ namespace TestingRestApiDemo
             const string RefFile = "C:\\temp\\GBP_2019-11-21.json";
 
             var restclient = new RestClient(url);
-            var request = new RestRequest("/api/exchangerates/rates/A/GBP/2019-11-21", Method.GET);
+            var request = new RestRequest("/api/exchangerates/rates/A/GBP/2019-11-21", Method.Get);
             var response = restclient.Execute(request);
 
             if (!File.Exists(RefFile))
@@ -66,7 +65,7 @@ namespace TestingRestApiDemo
             string RefFile = $"C:\\temp\\{currency}_{date}.json";
 
             var restclient = new RestClient(url);
-            var request = new RestRequest($"/api/exchangerates/rates/A/{currency}/{date}", Method.GET);
+            var request = new RestRequest($"/api/exchangerates/rates/A/{currency}/{date}", Method.Get);
             var response = restclient.Execute(request);
 
             if (!File.Exists(RefFile))
@@ -81,9 +80,9 @@ namespace TestingRestApiDemo
             string url = "http://api.nbp.pl";
 
             var restclient = new RestClient(url);
-            var request = new RestRequest("/api/exchangerates/rates/A/GBP/2019-11-21", Method.GET);
-            var response = restclient.Execute(request);
-            var responseObject = JsonConvert.DeserializeObject<ResponseModel>(response.Content);
+            var request = new RestRequest("/api/exchangerates/rates/A/GBP/2019-11-21", Method.Get);
+            var response = restclient.Execute<ResponseModel>(request);
+            var responseObject = response.Data;
 
             Assert.Equal("funt szterling", responseObject.Currency);
         }
@@ -94,9 +93,9 @@ namespace TestingRestApiDemo
             string url = "http://api.nbp.pl";
 
             var restclient = new RestClient(url);
-            var request = new RestRequest("/api/exchangerates/rates/A/GBP/2019-11-21", Method.GET);
-            var response = restclient.Execute(request);
-            var responseObject = JsonConvert.DeserializeObject<ResponseModel>(response.Content);
+            var request = new RestRequest("/api/exchangerates/rates/A/GBP/2019-11-21", Method.Get);
+            var response = restclient.Execute<ResponseModel>(request);
+            var responseObject = response.Data;
 
             responseObject.Currency
                 .Should()
@@ -123,9 +122,9 @@ namespace TestingRestApiDemo
             };    
 
             var restclient = new RestClient(url);
-            var request = new RestRequest("/api/exchangerates/rates/A/GBP/2019-11-21", Method.GET);
-            var response = restclient.Execute(request);
-            var responseObject = JsonConvert.DeserializeObject<ResponseModel>(response.Content);
+            var request = new RestRequest("/api/exchangerates/rates/A/GBP/2019-11-21", Method.Get);
+            var response = restclient.Execute<ResponseModel>(request);
+            var responseObject = response.Data;
 
             expectedResponse
                 .Should()
@@ -138,9 +137,9 @@ namespace TestingRestApiDemo
         public void TestGet7_Refactor(string currency, string date)
         {
             _serviceDriver
-                    .GetExchangeRate(currency, date)
-                    .Should()
-                    .BeEquivalentTo(DataRepository.GetExpectedResponse(currency, date));
+                .GetExchangeRate(currency, date)
+                .Should()
+                .BeEquivalentTo(DataRepository.GetExpectedResponse(currency, date));
         }
 
         [Fact]
@@ -149,7 +148,7 @@ namespace TestingRestApiDemo
             string url = "https://petstore.swagger.io";
 
             var restclient = new RestClient(url);
-            var request = new RestRequest("/v2/pet", Method.POST);
+            var request = new RestRequest("/v2/pet", Method.Post);
             request.AddHeader("Accept", "application/json");
             request.AddJsonBody("{\"category\":{\"id\":0,\"name\":\"MeetupAnimal\"},\"name\":\"KamilM\",\"photoUrls\":[\"http://myphotos.pl/1\"],\"tags\":[{\"id\":0,\"name\":\"EQTEK\"}],\"status\":\"available\"}");
 

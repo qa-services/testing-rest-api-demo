@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TestingRestApiDemo.Models;
 
 namespace TestingRestApiDemo
 {

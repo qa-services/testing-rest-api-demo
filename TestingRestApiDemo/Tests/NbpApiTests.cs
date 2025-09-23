@@ -3,17 +3,19 @@ using RestSharp;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using TestingRestApiDemo.Clients;
+using TestingRestApiDemo.Models;
 using Xunit;
 
-namespace TestingRestApiDemo
+namespace TestingRestApiDemo.Tests
 {
-    public class Tests
+    public class NbpApiTests
     {
-        private ApiClient _serviceDriver;
+        private NbpApiClient _apiClient;
 
-        public Tests()
+        public NbpApiTests()
         {
-            _serviceDriver = new ApiClient(Settings.NbpEndpoint);
+            _apiClient = new NbpApiClient(Settings.NbpApiBaseUrl);
         }
 
         [Fact]
@@ -136,26 +138,10 @@ namespace TestingRestApiDemo
         [InlineData("USD", "2019-04-08")]
         public void TestGet7_Refactor(string currency, string date)
         {
-            _serviceDriver
+            _apiClient
                 .GetExchangeRate(currency, date)
                 .Should()
                 .BeEquivalentTo(DataRepository.GetExpectedResponse(currency, date));
-        }
-
-        [Fact]
-        public void TestPost1_WithHeaderAndBody()
-        {
-            string url = "https://petstore.swagger.io";
-
-            var restclient = new RestClient(url);
-            var request = new RestRequest("/v2/pet", Method.Post);
-            request.AddHeader("Accept", "application/json");
-            request.AddJsonBody("{\"category\":{\"id\":0,\"name\":\"MeetupAnimal\"},\"name\":\"KamilM\",\"photoUrls\":[\"http://myphotos.pl/1\"],\"tags\":[{\"id\":0,\"name\":\"EQTEK\"}],\"status\":\"available\"}");
-
-            var response = restclient.Execute(request);
-            response.StatusCode
-                .Should()
-                .Be(HttpStatusCode.OK);
         }
     }
 }

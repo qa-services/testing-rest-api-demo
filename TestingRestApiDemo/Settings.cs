@@ -2,6 +2,7 @@
 {
     public static class Settings
     {
-        public static string NbpEndpoint = "http://api.nbp.pl";
+        public static string NbpApiBaseUrl = "http://api.nbp.pl";
+        public static string PetStoreApiBaseUrl = "https://petstore.swagger.io";
     }
 }

@@ -1,14 +1,14 @@
-﻿using Newtonsoft.Json;
-using RestSharp;
+﻿using RestSharp;
+using TestingRestApiDemo.Models;
 
-namespace TestingRestApiDemo
+namespace TestingRestApiDemo.Clients
 {
-    public class ApiClient
+    public class NbpApiClient
     {
         private string _uri;
         private RestClient _restclient;
 
-        public ApiClient(string uri)
+        public NbpApiClient(string uri)
         {
             _uri = uri;
             _restclient = new RestClient(_uri);

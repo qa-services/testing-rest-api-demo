@@ -1,40 +1,21 @@
-﻿using FluentAssertions;
-using RestSharp;
-using System.Net;
-using Xunit;
+﻿using RestSharp;
+using TestingRestApiDemo.Models;
 
 namespace TestingRestApiDemo.Clients;
 
-public class PetStoreApiClient
+public class PetStoreApiClient : BaseClient
 {
-
-    [Fact]
-    public void TestAddingPet_Basic()
+    public PetStoreApiClient(string baseUrl) : base(baseUrl)
     {
-        string url = "https://petstore.swagger.io";
-
-        var restclient = new RestClient(url);
-        var request = new RestRequest("/v2/pet", Method.Post);
-        request.AddHeader("Accept", "application/json");
-        request.AddJsonBody("{\"category\":{\"id\":0,\"name\":\"MeetupAnimal\"},\"name\":\"KamilM\",\"photoUrls\":[\"http://myphotos.pl/1\"],\"tags\":[{\"id\":0,\"name\":\"EQTEK\"}],\"status\":\"available\"}");
-
-        var response = restclient.Execute(request);
-        response.StatusCode
-            .Should()
-            .Be(HttpStatusCode.OK);
     }
 
-    [Fact]
-    public void TestAddingPet()
-    {
-        var restclient = new RestClient(Settings.PetStoreApiBaseUrl);
+    public RestResponse<PetResponse> SendCreatePetRequest(CreatePetRequest createPetRequest)
+    {        
         var request = new RestRequest("/v2/pet", Method.Post);
-        request.AddHeader("Accept", "application/json");
-        request.AddJsonBody("{\"category\":{\"id\":0,\"name\":\"MeetupAnimal\"},\"name\":\"KamilM\",\"photoUrls\":[\"http://myphotos.pl/1\"],\"tags\":[{\"id\":0,\"name\":\"EQTEK\"}],\"status\":\"available\"}");
+        AddDefaultHeaders(request);
+        request.AddJsonBody(createPetRequest);
 
-        var response = restclient.Execute(request);
-        response.StatusCode
-            .Should()
-            .Be(HttpStatusCode.OK);
+        var response = Restclient.Execute<PetResponse>(request);
+        return response;
     }
 }
